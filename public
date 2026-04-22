@@ -1,27 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>KSANF</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KSANF</title>
 
 <style>
 body{
 margin:0;
 background:#0b0f1a;
-font-family:sans-serif;
 color:white;
+font-family:sans-serif;
 }
+
+/* PAGE */
+.page{display:none;}
+.active{display:block;}
 
 /* HERO */
 .hero{
 padding:20px;
 background:linear-gradient(135deg,#111827,#1f2937);
-border-bottom-left-radius:20px;
-border-bottom-right-radius:20px;
+border-radius:0 0 20px 20px;
 }
-
-.hero h1{margin:0;font-size:22px}
-.hero p{opacity:0.7;font-size:13px}
 
 /* GRID */
 .grid{
@@ -32,13 +32,10 @@ padding:10px;
 }
 
 .card{
-background:rgba(255,255,255,0.05);
+background:#1e293b;
 border-radius:12px;
 overflow:hidden;
-transition:0.3s;
 }
-
-.card:hover{transform:scale(1.03)}
 
 .card img{
 width:100%;
@@ -46,17 +43,7 @@ height:120px;
 object-fit:cover;
 }
 
-.card h4{
-font-size:13px;
-margin:8px;
-}
-
-/* VIDEO */
-video{
-width:100%;
-}
-
-/* BOTTOM NAV */
+/* NAV */
 .nav{
 position:fixed;
 bottom:0;
@@ -65,43 +52,108 @@ display:flex;
 justify-content:space-around;
 background:#0f172a;
 padding:10px;
-border-top:1px solid rgba(255,255,255,0.1);
-font-size:12px;
 }
+
+.nav div{
+font-size:12px;
+cursor:pointer;
+opacity:0.7;
+}
+
+.nav div:hover{opacity:1}
 </style>
 </head>
 
 <body>
 
+<!-- HOME -->
+<div id="home" class="page active">
 <div class="hero">
-<h1>🎬 KSANF STREAM</h1>
-<p>Dracin & Movie Premium</p>
+<h2>🎬 KSANF</h2>
+<p>Streaming Dracin</p>
 </div>
 
 <div class="grid" id="videos"></div>
+</div>
 
+<!-- SEARCH -->
+<div id="search" class="page">
+<h2 style="padding:10px">🔍 Search</h2>
+<input id="searchInput" placeholder="Cari judul..." style="width:90%;margin:10px;padding:10px;border-radius:10px;border:none;">
+<div class="grid" id="searchResult"></div>
+</div>
+
+<!-- VIP -->
+<div id="vip" class="page">
+<h2 style="padding:10px">👑 VIP</h2>
+<p style="padding:10px">Upgrade ke VIP untuk buka semua video premium</p>
+<button onclick="alert('Fitur payment nanti')" style="margin:10px;padding:10px;border-radius:10px;border:none;background:gold;">Beli VIP</button>
+</div>
+
+<!-- PROFILE -->
+<div id="profile" class="page">
+<h2 style="padding:10px">👤 Profile</h2>
+<p style="padding:10px">User: Guest</p>
+</div>
+
+<!-- NAV -->
 <div class="nav">
-<div>Home</div>
-<div>Search</div>
-<div>VIP</div>
-<div>Profile</div>
+<div onclick="openPage('home')">🏠 Home</div>
+<div onclick="openPage('search')">🔍 Search</div>
+<div onclick="openPage('vip')">👑 VIP</div>
+<div onclick="openPage('profile')">👤 Profile</div>
 </div>
 
 <script>
+let allVideos = []
+
+function openPage(page){
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"))
+document.getElementById(page).classList.add("active")
+}
+
+/* LOAD VIDEO */
 fetch("/videos")
 .then(r=>r.json())
 .then(data=>{
+allVideos = data
+renderVideos(data)
+})
+
+function renderVideos(data){
 let html=""
 data.forEach(v=>{
-html+=
+html+=`
 <div class="card">
 <img src="${v.thumbnail}">
-<h4>${v.title}</h4>
+<p style="padding:5px">${v.title}</p>
 <video controls src="${v.url}"></video>
 </div>
-
+`
 })
 document.getElementById("videos").innerHTML=html
+}
+
+/* SEARCH */
+document.getElementById("searchInput").addEventListener("input",(e)=>{
+let keyword = e.target.value.toLowerCase()
+
+let filtered = allVideos.filter(v=>
+v.title.toLowerCase().includes(keyword)
+)
+
+let html=""
+filtered.forEach(v=>{
+html+=`
+<div class="card">
+<img src="${v.thumbnail}">
+<p style="padding:5px">${v.title}</p>
+<video controls src="${v.url}"></video>
+</div>
+`
+})
+
+document.getElementById("searchResult").innerHTML = html
 })
 </script>
 
