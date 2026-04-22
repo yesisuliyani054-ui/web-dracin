@@ -7,19 +7,19 @@
 <style>
 body{
 margin:0;
-background:#0b0f1a;
+background:#070b14;
 color:white;
 font-family:sans-serif;
 }
 
 /* PAGE */
 .page{display:none;}
-.active{display:block;}
+.active{display:block}
 
 /* HERO */
 .hero{
 padding:20px;
-background:linear-gradient(135deg,#111827,#1f2937);
+background:linear-gradient(135deg,#0f172a,#1e293b);
 border-radius:0 0 20px 20px;
 }
 
@@ -27,20 +27,33 @@ border-radius:0 0 20px 20px;
 .grid{
 display:grid;
 grid-template-columns:repeat(2,1fr);
-gap:10px;
+gap:12px;
 padding:10px;
 }
 
 .card{
-background:#1e293b;
-border-radius:12px;
+background:rgba(255,255,255,0.05);
+border-radius:15px;
 overflow:hidden;
+backdrop-filter:blur(10px);
+border:1px solid rgba(255,255,255,0.08);
+transition:0.3s;
+}
+
+.card:hover{
+transform:scale(1.03);
+box-shadow:0 0 20px rgba(255,255,255,0.1);
 }
 
 .card img{
 width:100%;
 height:120px;
 object-fit:cover;
+}
+
+.card p{
+margin:5px;
+font-size:13px;
 }
 
 /* NAV */
@@ -52,6 +65,7 @@ display:flex;
 justify-content:space-around;
 background:#0f172a;
 padding:10px;
+border-top:1px solid rgba(255,255,255,0.1);
 }
 
 .nav div{
@@ -61,6 +75,65 @@ opacity:0.7;
 }
 
 .nav div:hover{opacity:1}
+
+/* MODAL LOGIN */
+.modal{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.7);
+display:none;
+justify-content:center;
+align-items:center;
+}
+
+.modal-content{
+background:#111827;
+padding:20px;
+border-radius:15px;
+width:80%;
+max-width:300px;
+}
+
+input{
+width:100%;
+margin:5px 0;
+padding:10px;
+border:none;
+border-radius:10px;
+}
+
+button{
+width:100%;
+padding:10px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+background:#2563eb;
+color:white;
+}
+
+.close{
+float:right;
+cursor:pointer;
+}
+
+/* VIP BUTTON */
+.vip-btn{
+background:gold;
+color:black;
+}
+
+/* SEARCH */
+.search-box{
+width:90%;
+margin:10px;
+padding:10px;
+border-radius:10px;
+border:none;
+}
 </style>
 </head>
 
@@ -70,38 +143,55 @@ opacity:0.7;
 <div id="home" class="page active">
 <div class="hero">
 <h2>🎬 KSANF</h2>
-<p>Streaming Dracin</p>
+<p>Streaming Dracin Premium</p>
 </div>
-
 <div class="grid" id="videos"></div>
 </div>
 
 <!-- SEARCH -->
 <div id="search" class="page">
 <h2 style="padding:10px">🔍 Search</h2>
-<input id="searchInput" placeholder="Cari judul..." style="width:90%;margin:10px;padding:10px;border-radius:10px;border:none;">
+<input id="searchInput" class="search-box" placeholder="Cari dracin...">
 <div class="grid" id="searchResult"></div>
 </div>
 
 <!-- VIP -->
 <div id="vip" class="page">
 <h2 style="padding:10px">👑 VIP</h2>
-<p style="padding:10px">Upgrade ke VIP untuk buka semua video premium</p>
-<button onclick="alert('Fitur payment nanti')" style="margin:10px;padding:10px;border-radius:10px;border:none;background:gold;">Beli VIP</button>
+<p style="padding:10px">Buka semua konten premium tanpa batas</p>
+<button class="vip-btn">Beli VIP</button>
 </div>
 
 <!-- PROFILE -->
 <div id="profile" class="page">
 <h2 style="padding:10px">👤 Profile</h2>
-<p style="padding:10px">User: Guest</p>
+<p id="userStatus" style="padding:10px">Belum login</p>
+<button onclick="openLogin()">Login / Daftar</button>
 </div>
 
 <!-- NAV -->
 <div class="nav">
-<div onclick="openPage('home')">🏠 Home</div>
-<div onclick="openPage('search')">🔍 Search</div>
-<div onclick="openPage('vip')">👑 VIP</div>
-<div onclick="openPage('profile')">👤 Profile</div>
+<div onclick="openPage('home')">🏠</div>
+<div onclick="openPage('search')">🔍</div>
+<div onclick="openPage('vip')">👑</div>
+<div onclick="openPage('profile')">👤</div>
+</div>
+
+<!-- LOGIN MODAL -->
+<div id="loginModal" class="modal">
+<div class="modal-content">
+<span class="close" onclick="closeLogin()">✖</span>
+
+<h3>Login</h3>
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+
+<p style="text-align:center">atau</p>
+
+<h3>Daftar</h3>
+<button onclick="register()">Daftar</button>
+</div>
 </div>
 
 <script>
@@ -110,6 +200,32 @@ let allVideos = []
 function openPage(page){
 document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"))
 document.getElementById(page).classList.add("active")
+}
+
+/* LOGIN UI */
+function openLogin(){
+document.getElementById("loginModal").style.display="flex"
+}
+function closeLogin(){
+document.getElementById("loginModal").style.display="none"
+}
+
+/* DUMMY LOGIN */
+function login(){
+let email = document.getElementById("email").value
+localStorage.setItem("user", email)
+document.getElementById("userStatus").innerText = "Login: "+email
+closeLogin()
+}
+
+function register(){
+alert("Daftar berhasil (dummy)")
+}
+
+/* LOAD USER */
+let user = localStorage.getItem("user")
+if(user){
+document.getElementById("userStatus").innerText = "Login: "+user
 }
 
 /* LOAD VIDEO */
@@ -126,7 +242,7 @@ data.forEach(v=>{
 html+=`
 <div class="card">
 <img src="${v.thumbnail}">
-<p style="padding:5px">${v.title}</p>
+<p>${v.title}</p>
 <video controls src="${v.url}"></video>
 </div>
 `
@@ -147,7 +263,7 @@ filtered.forEach(v=>{
 html+=`
 <div class="card">
 <img src="${v.thumbnail}">
-<p style="padding:5px">${v.title}</p>
+<p>${v.title}</p>
 <video controls src="${v.url}"></video>
 </div>
 `
