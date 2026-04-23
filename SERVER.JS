@@ -21,6 +21,8 @@ app.use(rateLimit({
 }))
 
 app.use(express.static("public", {
+  maxAge: 0
+}))
   maxAge: "7d",
   etag: true
 }))
