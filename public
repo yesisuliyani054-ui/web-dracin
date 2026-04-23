@@ -8,129 +8,68 @@
 *{box-sizing:border-box}
 body{
 margin:0;
-background:#03050b;
+background:#000;
 color:white;
 font-family:sans-serif;
 }
 
-/* TOPBAR */
-.topbar{
-position:fixed;
-top:0;
-width:100%;
+/* HEADER */
+.header{padding:10px}
+.search{
 display:flex;
-justify-content:space-between;
-padding:12px;
-background:rgba(0,0,0,0.4);
-backdrop-filter:blur(15px);
-z-index:10;
+background:#1c1c1c;
+border-radius:20px;
+padding:8px;
+}
+.search input{
+flex:1;
+background:none;
+border:none;
+color:white;
+outline:none;
+padding-left:10px;
 }
 
-.logo{
-font-weight:bold;
-color:#ff2e63;
-letter-spacing:1px;
-}
-
-/* HERO */
-.hero{
-margin-top:50px;
-height:240px;
-position:relative;
-}
-
-.hero img{
-width:100%;
-height:100%;
-object-fit:cover;
-opacity:0.5;
-}
-
-.hero-content{
-position:absolute;
-bottom:20px;
-left:15px;
-}
-
-.play-btn{
-background:#ff2e63;
-padding:10px 16px;
-border-radius:12px;
+/* TABS */
+.tabs{
+display:flex;
+gap:10px;
 margin-top:10px;
-display:inline-block;
-}
-
-/* ROW */
-.row{
-margin-top:15px;
-}
-
-.row h3{
-margin-left:12px;
-font-size:14px;
-opacity:0.8;
-}
-
-.scroll{
-display:flex;
 overflow-x:auto;
+}
+.tab{
+padding:8px 14px;
+background:#2a2a2a;
+border-radius:12px;
+cursor:pointer;
+white-space:nowrap;
+}
+.tab.active{
+background:#ffd700;
+color:black;
+}
+
+/* GRID */
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
 padding:10px;
-gap:12px;
 }
-
-/* CARD */
 .card{
-min-width:150px;
-border-radius:15px;
+background:#1c1c1c;
+border-radius:12px;
 overflow:hidden;
-position:relative;
-transition:0.3s;
+cursor:pointer;
+transition:0.2s;
 }
-
-.card:hover{
-transform:scale(1.07);
-}
-
+.card:hover{transform:scale(1.03)}
 .card img{
 width:100%;
-height:200px;
+height:180px;
 object-fit:cover;
 }
-
-.overlay{
-position:absolute;
-bottom:0;
-width:100%;
-padding:10px;
-background:linear-gradient(transparent,rgba(0,0,0,0.9));
-font-size:12px;
-}
-
-/* PLAYER */
-.player{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:black;
-display:none;
-z-index:99;
-}
-
-.player video{
-width:100%;
-height:100%;
-}
-
-.close{
-position:absolute;
-top:15px;
-left:15px;
-background:red;
-padding:6px 10px;
-border-radius:8px;
-}
+.card-info{padding:8px;font-size:12px}
 
 /* NAV */
 .nav{
@@ -139,90 +78,285 @@ bottom:0;
 width:100%;
 display:flex;
 justify-content:space-around;
-background:#05070d;
+background:#111;
 padding:10px;
-border-top:1px solid rgba(255,255,255,0.1);
 }
-
 .nav div{
 font-size:12px;
 opacity:0.6;
 cursor:pointer;
+text-align:center;
+}
+.nav .active{
+color:#ffd700;
+opacity:1;
 }
 
-.nav .active{
-opacity:1;
-color:#ff2e63;
+/* PAGE */
+.page{display:none}
+.activePage{display:block}
+
+/* MODAL */
+.modal{
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:rgba(0,0,0,0.8);
+display:none;
+justify-content:center;
+align-items:center;
+}
+.box{
+background:#1c1c1c;
+padding:20px;
+border-radius:12px;
+width:80%;
+}
+input{
+width:100%;
+padding:10px;
+margin:5px 0;
+border:none;
+border-radius:8px;
+}
+button{
+width:100%;
+padding:10px;
+margin-top:5px;
+border:none;
+border-radius:8px;
+background:#ffd700;
+}
+
+/* AUTH TAB */
+.authTab{
+flex:1;
+text-align:center;
+padding:8px;
+background:#2a2a2a;
+border-radius:10px;
+cursor:pointer;
+}
+.activeTab{
+background:#ffd700;
+color:black;
 }
 </style>
 </head>
 
 <body>
 
-<div class="topbar">
-<div class="logo">KSANF</div>
-<div onclick="openLogin()">Login</div>
+<!-- HOME -->
+<div id="home" class="page activePage">
+
+<div class="header">
+<div class="search">
+<input id="searchInput" placeholder="Cari drama...">
 </div>
 
-<!-- HERO -->
-<div class="hero">
-<img src="https://i.imgur.com/7b1ZQZL.jpg">
-<div class="hero-content">
-<h2>Drama Terpopuler</h2>
-<div class="play-btn">▶ Tonton Sekarang</div>
+<div class="tabs">
+<div class="tab active" onclick="setTab(this)">Populer</div>
+<div class="tab" onclick="setTab(this)">Anime</div>
+<div class="tab" onclick="setTab(this)">Drama</div>
 </div>
 </div>
 
-<!-- ROW -->
-<div class="row">
-<h3>🔥 Trending</h3>
-<div class="scroll" id="videos"></div>
+<div class="grid" id="videos"></div>
 </div>
 
-<!-- PLAYER -->
-<div id="player" class="player">
-<div class="close" onclick="closePlayer()">✖</div>
-<video id="vid" controls autoplay></video>
+<!-- VIP -->
+<div id="vip" class="page">
+<h2 style="padding:10px">VIP</h2>
+<div id="vipInfo"></div>
+<div id="paymentList"></div>
+</div>
+
+<!-- PROFILE -->
+<div id="profile" class="page">
+<h2 style="padding:10px">Profil</h2>
+<p id="userEmail"></p>
+<button onclick="logout()">Logout</button>
+</div>
+
+<!-- LOGIN / REGISTER -->
+<div id="modal" class="modal">
+<div class="box">
+
+<div style="display:flex; gap:10px;">
+<div id="tabLogin" class="authTab activeTab" onclick="switchAuth('login')">Login</div>
+<div id="tabRegister" class="authTab" onclick="switchAuth('register')">Daftar</div>
+</div>
+
+<div id="loginForm">
+<input id="loginEmail" placeholder="Email">
+<input id="loginPass" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+</div>
+
+<div id="registerForm" style="display:none;">
+<input id="regEmail" placeholder="Email">
+<input id="regPass" type="password" placeholder="Password">
+<button onclick="register()">Daftar</button>
+</div>
+
+<button onclick="closeLogin()">Tutup</button>
+
+</div>
 </div>
 
 <!-- NAV -->
 <div class="nav">
-<div class="active">🏠</div>
-<div>🔍</div>
-<div>👑</div>
-<div>👤</div>
+<div class="active" onclick="nav('home',this)">🏠<br>Home</div>
+<div onclick="nav('home',this)">🔍<br>Temukan</div>
+<div onclick="nav('vip',this)">👑<br>VIP</div>
+<div onclick="nav('profile',this)">👤<br>Profil</div>
 </div>
 
 <script>
+let allVideos=[]
+
+/* NAV FIX */
+function nav(page,el){
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("activePage"))
+document.getElementById(page).classList.add("activePage")
+
+document.querySelectorAll(".nav div").forEach(n=>n.classList.remove("active"))
+el.classList.add("active")
+}
+
+/* TAB */
+function setTab(el){
+document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"))
+el.classList.add("active")
+}
+
+/* AUTH */
+function switchAuth(type){
+loginForm.style.display = type==="login"?"block":"none"
+registerForm.style.display = type==="register"?"block":"none"
+
+tabLogin.classList.remove("activeTab")
+tabRegister.classList.remove("activeTab")
+
+if(type==="login") tabLogin.classList.add("activeTab")
+else tabRegister.classList.add("activeTab")
+}
+
+function openLogin(){modal.style.display="flex"}
+function closeLogin(){modal.style.display="none"}
+
+/* DEVICE */
 function getDevice(){
 return btoa(navigator.userAgent+screen.width)
+}
+
+/* LOGIN */
+function login(){
+fetch("/login",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+email:loginEmail.value,
+password:loginPass.value,
+device:getDevice()
+})
+})
+.then(r=>r.json())
+.then(d=>{
+if(d.token){
+localStorage.setItem("token",d.token)
+localStorage.setItem("email",loginEmail.value)
+alert("Login sukses")
+closeLogin()
+loadUser()
+}else alert(d.msg)
+})
+}
+
+/* REGISTER AUTO LOGIN */
+function register(){
+fetch("/register",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+email:regEmail.value,
+password:regPass.value,
+device:getDevice()
+})
+})
+.then(r=>r.json())
+.then(d=>{
+if(d.token){
+localStorage.setItem("token",d.token)
+localStorage.setItem("email",regEmail.value)
+alert("Akun dibuat")
+closeLogin()
+loadUser()
+}else alert(d.msg)
+})
+}
+
+/* USER */
+function loadUser(){
+let u=localStorage.getItem("email")
+if(u){
+userEmail.innerText=u
+}else{
+openLogin()
+}
+}
+
+/* LOGOUT */
+function logout(){
+localStorage.clear()
+location.reload()
 }
 
 /* LOAD VIDEO */
 fetch("/videos")
 .then(r=>r.json())
-.then(data=>{
+.then(d=>{
+allVideos=d
+render(d)
+})
+
+function render(data){
 let html=""
 data.forEach(v=>{
 html+=`
-<div class="card" onclick="play('${v.url}')">
+<div class="card">
 <img src="${v.thumbnail}">
-<div class="overlay">${v.title}</div>
+<div class="card-info">
+<b>${v.title}</b>
+</div>
 </div>
 `
 })
-document.getElementById("videos").innerHTML=html
+videos.innerHTML=html
+}
+
+/* SEARCH */
+searchInput.addEventListener("input",e=>{
+let f=allVideos.filter(v=>v.title.toLowerCase().includes(e.target.value.toLowerCase()))
+render(f)
 })
 
-function play(url){
-document.getElementById("player").style.display="block"
-document.getElementById("vid").src=url
+/* VIP */
+fetch("/vip").then(r=>r.json()).then(v=>{
+if(v){
+vipInfo.innerHTML=`Harga: ${v.vipPrice} | ${v.vipDuration} hari`
 }
+})
 
-function closePlayer(){
-document.getElementById("player").style.display="none"
-document.getElementById("vid").pause()
-}
+fetch("/payment").then(r=>r.json()).then(p=>{
+let html=""
+p.forEach(x=>{
+html+=`<div>${x.name} - ${x.number}</div>`
+})
+paymentList.innerHTML=html
+})
+
+loadUser()
 </script>
 
 </body>
