@@ -83,8 +83,8 @@ function adminOnly(req,res,next){
 /* ================= AUTO ADMIN ================= */
 
 async function createAdmin(){
-  const email = process.env.ADMIN_EMAIL
-  const password = process.env.ADMIN_PASSWORD
+  const email = process.env.yesisuliyani054@gmail.com
+  const password = process.env.ksanf123
 
   if(!email || !password) return
 
